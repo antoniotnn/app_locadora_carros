@@ -15,7 +15,14 @@ class CreateCarrosTable extends Migration
     {
         Schema::create('carros', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('modelo_id');
+            $table->string('placa', 10)->unique();
+            $table->boolean('disponivel');
+            $table->integer('km');
             $table->timestamps();
+
+            //foreign key (constraints)
+            $table->foreign('modelo_id')->references('id')->on('modelos');
         });
     }
 
@@ -26,6 +33,10 @@ class CreateCarrosTable extends Migration
      */
     public function down()
     {
+        Schema::table('carros', function(Blueprint $table) {
+            $table->dropForeign('carros_modelo_id_foreign');     // tabela_colunaQueRecebeFk_foreign
+        });
+        
         Schema::dropIfExists('carros');
     }
 }
