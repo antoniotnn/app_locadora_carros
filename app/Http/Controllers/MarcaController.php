@@ -44,6 +44,20 @@ class MarcaController extends Controller
     public function store(Request $request)
     {
         //$marca = Marca::create($request->all());
+        //nome
+        //imagem
+        $regras = [
+            'nome' => 'required|unique:marcas',
+            'imagem' => 'required'
+        ];
+
+        $feedback = [
+            'required' => 'O campo :attribute é obrigatório',
+            'nome.unique' => 'O nome da Marca já existe'
+        ];
+
+        $request->validate($regras, $feedback); //parametrizar no header da requisição o Accept application/json , para que esse metodo validate não tente fazer um redirect pra rota anterior após informar erros de validacao
+
         $marca = $this->marca->create($request->all());
         //return $marca;
         return response()->json($marca, 201);
