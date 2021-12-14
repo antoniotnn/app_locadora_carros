@@ -13,9 +13,22 @@ class Marca extends Model
 
     public function rules() {
         return [
-            'nome' => 'required|unique:marcas',
+            'nome' => 'required|unique:marcas,nome,'.$this->id.'|min:3',
             'imagem' => 'required'
         ];
+
+        /*
+            Importante sobre validação unique principalmente em apis, rest, com stateless, fazendo uma atualiza-
+            cao com PUT. Ocorrerá um erro e o framework entenderá que estamos adicionando outro registro com mesmo nome.
+            Para corrigir isso o unique tem 3 parâmetros:
+
+            1) tabela onde será feita a pesquisa da existência unica do valor que estamos passando (marcas)
+            2) (Parametro omitido), colocado após virgula: Nome da coluna que será pesquisada na tabela. (nome)
+                Por padrão o nome da coluna na tabela pesquisada é a coluna que tem o mesmo nome do input 
+                (quando omitido).
+            3) id do registro que será desconsiderado na pesquisa
+
+        */
     }
 
     public function feedback() {
