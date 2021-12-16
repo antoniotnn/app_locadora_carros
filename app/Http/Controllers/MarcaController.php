@@ -54,7 +54,7 @@ class MarcaController extends Controller
 
         //dd($request->imagem);
         //dd($request->file('imagem'));
-        $image = $request->file('imagem');
+        $imagem = $request->file('imagem');
         
         //$image->store('imagens');//  , 'local'); // parâmetros: path, disco , o padrao é local, entao nesse caso o 2o parametro pode ser omitido
         // configurar disk em config/filesystems.php  (local, public ou amazon s3)
@@ -62,10 +62,21 @@ class MarcaController extends Controller
             disco local: storage/app 
             disco public: storage/app/public  (apesar desse nome, ele nao fica disponivel de forma publica), a nao ser com uma configuracao
         */ 
-        $image->store('imagens', 'public');
+        $imagem_urn = $imagem->store('imagens', 'public');
+        //dd($imagem_urn);   pathcompleto da imagem : imagens/9139uklansfdkl189yjafs.pnh
           
-        dd('Upload de arquivos');
-        //$marca = $this->marca->create($request->all());
+        //dd('Upload de arquivos');
+        $marca = $this->marca->create([
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn
+        ]);
+        /*
+            OU
+            $marca->nome = $request->nome;
+            $marca->imagem = $imagem_urn;
+            $marca->save();
+        */
+
         //return $marca;
         return response()->json($marca, 201);
     }
