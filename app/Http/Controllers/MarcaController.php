@@ -63,6 +63,7 @@ class MarcaController extends Controller
             disco public: storage/app/public  (apesar desse nome, ele nao fica disponivel de forma publica), a nao ser com uma configuracao
         */ 
         $imagem_urn = $imagem->store('imagens', 'public');
+        
         //dd($imagem_urn);   pathcompleto da imagem : imagens/9139uklansfdkl189yjafs.pnh
           
         //dd('Upload de arquivos');
@@ -127,6 +128,11 @@ class MarcaController extends Controller
 
         $marca = $this->marca->find($id);
 
+        //dd($request->nome);   // Nos vrebos PUT E PATCH ao dar o dd os os parametros nao sao reconhecidos
+                                // para resolver isso , usar o verbo POST pra atualizar, passando o parametro
+                                // _method no body  e o valor put ou patch no valor.
+        //dd($request->file('imagem'));
+
         //dd($marca);
 
         if($marca === null) {
@@ -152,7 +158,14 @@ class MarcaController extends Controller
             $request->validate($marca->rules(), $marca->feedback());
         }
 
-        $marca->update($request->all());
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens', 'public');
+        
+        // para isso funcionar, necessário usar o POST  e passar no body da requisicao o parametro _method com value put ou patch
+        $marca->update([
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn
+        ]);
 
         //return $marca;
         return response()->json($marca, 200);
