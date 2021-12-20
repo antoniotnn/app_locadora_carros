@@ -19,7 +19,14 @@ class ModeloController extends Controller
      */
     public function index()
     {
-        return response()->json($this->modelo->all(), 200);
+        //return response()->json($this->modelo->all(), 200);
+        /*
+            ->all()  cria um OBJ de consulta e em seguida executando o método get(), retornando collection
+            ->get()  permite modificar a consulta, retornando tb uma collection,
+            então por isso o return abaixo não pode utilizar o ->all(), pois utiliza um ->with() que 
+            modifica a consulta.
+        */
+        return response()->json($this->modelo->with('marca')->get(), 200);
     }
 
     /**
@@ -66,7 +73,7 @@ class ModeloController extends Controller
      */
     public function show($id)
     {
-        $modelo = $this->modelo->find($id);
+        $modelo = $this->modelo->with('marca')->find($id); //chamando o metodo marca de modelo, para trazer o relacionamento belongsTo
         if($modelo === null) {
             return response()->json(['erro' => 'Recurso pesquisado não existe'], 404);
         }

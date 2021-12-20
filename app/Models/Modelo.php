@@ -49,4 +49,10 @@ class Modelo extends Model
             'abs.boolean' => 'O Campo aceita somente valores true, false, 1 ou 0' 
         ];
     }
+
+    public function marca() {
+        //um modelo pertence a UMA marca
+        //return $this->belongsTo(Marca::class);
+        return $this->belongsTo('App\Models\Marca');
+    }
 }

@@ -19,9 +19,11 @@ class MarcaController extends Controller
      */
     public function index()
     {
-        $marcas = $this->marca->all();
+        //$marcas = $this->marca->all();
         //$marcas = Marca::all();
         //return $marcas;
+
+        $marcas = $this->marca->with('modelos')->get();
 
         return response()->json($marcas, 200);
     }
@@ -91,7 +93,7 @@ class MarcaController extends Controller
      */
     public function show($id)
     {
-        $marca = $this->marca->find($id);
+        $marca = $this->marca->with('modelos')->find($id); //chamando o metodo modelos de marca, para trazer o relacionamento hasMany
         if($marca === null) {
             //return ['erro' => 'Recurso pesquisado não existe'];
             return response()->json(['erro' => 'Recurso pesquisado não existe'], 404);
