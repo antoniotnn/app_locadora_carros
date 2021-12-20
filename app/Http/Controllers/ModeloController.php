@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Modelo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ModeloController extends Controller
 {
@@ -154,7 +155,7 @@ class ModeloController extends Controller
         Storage::disk('public')->delete($modelo->imagem);
         
         $modelo->delete();
-        
+
         return response()->json(['msg' => 'A marca foi removida com sucesso'], 200);
     }
 }

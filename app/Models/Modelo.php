@@ -13,7 +13,7 @@ class Modelo extends Model
 
     public function rules() {
         return [
-            'marca_id' => 'exists:marca,id',
+            'marca_id' => 'exists:marcas,id',
             'nome' => 'required|unique:modelos,nome,'.$this->id.'|min:3',
             'imagem' => 'required|file|mimes:png,jpeg,jpg',
             'numero_portas' => 'required|integer|digits_between:1,5', // digitos entre 1 e 5 aceitos , incluindo eles
