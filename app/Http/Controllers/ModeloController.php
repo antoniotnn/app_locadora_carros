@@ -17,7 +17,7 @@ class ModeloController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //return response()->json($this->modelo->all(), 200);
         /*
@@ -26,7 +26,27 @@ class ModeloController extends Controller
             então por isso o return abaixo não pode utilizar o ->all(), pois utiliza um ->with() que 
             modifica a consulta.
         */
-        return response()->json($this->modelo->with('marca')->get(), 200);
+        $modelos = array();
+
+        if($request->has('atributos')) {
+            $atributos = $request->atributos;
+            //$modelos = $this->modelo->selectRaw('id', 'nome', 'imagem')->get();
+            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get(); // para o parametro marca_id nao vir null no endpoint ao passar na url o parametro, marca_id tem que ser passado no parametro da url
+            //selectRaw aceita string unica separada por virgulas (para identificar as colunas)
+
+            //'id', 'nome', 'imagem'   ---  usar select()
+            //"id,nome,imagem" -- usar selectRaw()
+
+
+
+            //dd($request->atributos);
+            
+        } else {
+            $modelos = $this->modelo->with('marca')->get();
+        }
+        
+        //return response()->json($this->modelo->with('marca')->get(), 200);
+        return response()->json($modelos, 200);
     }
 
     /**
