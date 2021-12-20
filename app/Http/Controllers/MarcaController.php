@@ -170,10 +170,17 @@ class MarcaController extends Controller
         $imagem_urn = $imagem->store('imagens', 'public');
         
         // para isso funcionar, necessário usar o POST  e passar no body da requisicao o parametro _method com value put ou patch
-        $marca->update([
-            'nome' => $request->nome,
-            'imagem' => $imagem_urn
-        ]);
+        //preencher o obj marca com os dados do request
+        $marca->fill($request->all());
+        $marca->imagem = $imagem_urn;
+        //dd($marca->getAttributes());
+        $marca->save(); // método save consegue lidar tanto com inserção quanto update, desde q o id esteja no contexto.
+        /*
+            $marca->update([
+                'nome' => $request->nome,
+                'imagem' => $imagem_urn
+            ]);
+        */
 
         //return $marca;
         return response()->json($marca, 200);

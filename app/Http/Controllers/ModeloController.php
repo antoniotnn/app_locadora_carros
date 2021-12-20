@@ -132,16 +132,20 @@ class ModeloController extends Controller
         $imagem_urn = $imagem->store('imagens/modelos', 'public');
         
         // para isso funcionar, necessário usar o POST  e passar no body da requisicao o parametro _method com value put ou patch
-        $modelo->update([
-            'marca_id' => $request->marca_id,
-            'nome' => $request->nome,
-            'imagem' => $imagem_urn,
-            'numero_portas' => $request->numero_portas,
-            'lugares' => $request->lugares,
-            'air_bag' => $request->air_bag,
-            'abs' => $request->abs
-        ]);
-
+        $modelo->fill($request->all());
+        $modelo->imagem = $imagem_urn;
+        $modelo->save();
+        /*
+            $modelo->update([
+                'marca_id' => $request->marca_id,
+                'nome' => $request->nome,
+                'imagem' => $imagem_urn,
+                'numero_portas' => $request->numero_portas,
+                'lugares' => $request->lugares,
+                'air_bag' => $request->air_bag,
+                'abs' => $request->abs
+            ]);
+        */
         return response()->json($modelo, 200);
     }
 
