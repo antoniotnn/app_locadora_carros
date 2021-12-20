@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class ModeloController extends Controller
 {
+    public function __construct(Modelo $modelo) {
+        $this->modelo = $modelo;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +18,7 @@ class ModeloController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json($this->modelo->all(), 200);
     }
 
     /**
@@ -35,7 +39,22 @@ class ModeloController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate($this->modelo->rules(), $this->modelo->feedback()); //passar Accept application json no Header da requisição 
+        
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens/modelos', 'public');
+        
+        $modelo = $this->modelo->create([
+            'marca_id' => $request->marca_id,
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn,
+            'numero_portas' => $request->numero_portas,
+            'lugares' => $request->lugares,
+            'air_bag' => $request->air_bag,
+            'abs' => $request->abs
+        ]);
+    
+        return response()->json($modelo, 201);
     }
 
     /**
@@ -44,9 +63,14 @@ class ModeloController extends Controller
      * @param  \App\Models\Modelo  $modelo
      * @return \Illuminate\Http\Response
      */
-    public function show(Modelo $modelo)
+    public function show($id)
     {
-        //
+        $modelo = $this->modelo->find($id);
+        if($modelo === null) {
+            return response()->json(['erro' => 'Recurso pesquisado não existe'], 404);
+        }
+        //return $marca;
+        return response()->json($modelo, 200);
     }
 
     /**
@@ -67,9 +91,50 @@ class ModeloController extends Controller
      * @param  \App\Models\Modelo  $modelo
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Modelo $modelo)
+    public function update(Request $request, $id)
     {
-        //
+        $modelo = $this->modelo->find($id);
+
+        if($modelo === null) {
+            return response()->json(['erro' => 'Impossível realizar a atualização. O recurso solicitado não existe'], 404);
+        }
+
+        if($request->method() === 'PATCH') {
+            $regrasDinamicas = array();
+
+            //percorrendo todas as regras definidas no Model
+            foreach($modelo->rules() as $input => $regra) {
+                //coletar apenas as regras aplicáveis aos parâmetros parciais da requisição patch
+                if (array_key_exists($input, $request->all())) {
+                    $regrasDinamicas[$input] = $regra;
+                }
+            }
+
+            $request->validate($regrasDinamicas, $modelo->feedback());
+        } else {
+            $request->validate($modelo->rules(), $modelo->feedback());
+        }
+        
+        //remmove o arquivo antigo caso um novo arquivo tenha sido enviado no request
+        if($request->file('imagem')) {
+            Storage::disk('public')->delete($modelo->imagem);
+        }
+
+        $imagem = $request->file('imagem');
+        $imagem_urn = $imagem->store('imagens/modelos', 'public');
+        
+        // para isso funcionar, necessário usar o POST  e passar no body da requisicao o parametro _method com value put ou patch
+        $modelo->update([
+            'marca_id' => $request->marca_id,
+            'nome' => $request->nome,
+            'imagem' => $imagem_urn,
+            'numero_portas' => $request->numero_portas,
+            'lugares' => $request->lugares,
+            'air_bag' => $request->air_bag,
+            'abs' => $request->abs
+        ]);
+
+        return response()->json($modelo, 200);
     }
 
     /**
@@ -78,8 +143,18 @@ class ModeloController extends Controller
      * @param  \App\Models\Modelo  $modelo
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Modelo $modelo)
+    public function destroy($id)
     {
-        //
+        $modelo = $this->modelo->find($id);
+
+        if($modelo === null) {
+            return response()->json(['erro' => 'Impossível realizar a exclusão. O recurso solicitado não existe'], 404);
+        }
+
+        Storage::disk('public')->delete($modelo->imagem);
+        
+        $modelo->delete();
+        
+        return response()->json(['msg' => 'A marca foi removida com sucesso'], 200);
     }
 }
