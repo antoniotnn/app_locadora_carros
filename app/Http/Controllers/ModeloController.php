@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Modelo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\ModeloRepository;
 
 class ModeloController extends Controller
 {
@@ -19,53 +20,24 @@ class ModeloController extends Controller
      */
     public function index(Request $request)
     {
-        //return response()->json($this->modelo->all(), 200);
-        /*
-            ->all()  cria um OBJ de consulta e em seguida executando o método get(), retornando collection
-            ->get()  permite modificar a consulta, retornando tb uma collection,
-            então por isso o return abaixo não pode utilizar o ->all(), pois utiliza um ->with() que 
-            modifica a consulta.
-        */
-        $modelos = array();
-
+        $modeloRepository = new ModeloRepository($this->modelo);
+        
         if($request->has('atributos_marca')) {
-            $atributos_marca = $request->atributos_marca;
-            $modelos = $this->modelo->with('marca:id,'.$atributos_marca); 
+            $atributos_marca = 'marca:id,'.$request->atributos_marca;
+            $modeloRepository->selectAtributosRegistrosRelacionados($atributos_marca);
         } else {
-            $modelos = $this->modelo->with('marca');
+            $modeloRepository->selectAtributosRegistrosRelacionados('marca');
         }
 
         if($request->has('filtro')) {
-            //dd($request->filtro);
-            $filtros = explode(';', $request->filtro);
-            //dd($filtros);
-            foreach ($filtros as $key => $condicao) {
-                $c = explode(':', $condicao);
-                $modelos = $modelos->where($c[0], $c[1], $c[2]); // Ex: where('nome', '=', 'Ford');
-            }
-            //dd(explode(':', $request->filtro)); //explode() quebra o string com base num caracter.
-            
+            $modeloRepository->filtro($request->filtro); 
         }
 
         if($request->has('atributos')) {
-            $atributos = $request->atributos;
-            
-            //dd($atributos_marca);
-            //$modelos = $this->modelo->selectRaw('id', 'nome', 'imagem')->get();
-            //$modelos = $this->modelo->selectRaw($atributos)->with('marca')->get(); // para o parametro marca_id nao vir null no endpoint ao passar na url o parametro, marca_id tem que ser passado no parametro da url
-            //selectRaw aceita string unica separada por virgulas (para identificar as colunas)
-            //$modelos = $this->modelo->selectRaw($atributos)->with('marca:id,nome,imagem')->get();
-            $modelos = $modelos->selectRaw($atributos)->get();
-
-            //'id', 'nome', 'imagem'   ---  usar select()
-            //"id,nome,imagem" -- usar selectRaw()
-            //dd($request->atributos);
-        } else {
-            $modelos = $modelos->get();
+            $modeloRepository->selectAtributos($request->atributos);
         }
-        
-        //return response()->json($this->modelo->with('marca')->get(), 200);
-        return response()->json($modelos, 200);
+
+        return response()->json($modeloRepository->getResultado(), 200);
     }
 
     /**
