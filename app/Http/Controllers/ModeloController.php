@@ -37,9 +37,14 @@ class ModeloController extends Controller
 
         if($request->has('filtro')) {
             //dd($request->filtro);
+            $filtros = explode(';', $request->filtro);
+            //dd($filtros);
+            foreach ($filtros as $key => $condicao) {
+                $c = explode(':', $condicao);
+                $modelos = $modelos->where($c[0], $c[1], $c[2]); // Ex: where('nome', '=', 'Ford');
+            }
             //dd(explode(':', $request->filtro)); //explode() quebra o string com base num caracter.
-            $condicoes = explode(':', $request->filtro);
-            $modelos = $modelos->where($condicoes[0], $condicoes[1], $condicoes[2]); // Ex: where('nome', '=', 'Ford');
+            
         }
 
         if($request->has('atributos')) {
