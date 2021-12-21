@@ -28,21 +28,28 @@ class ModeloController extends Controller
         */
         $modelos = array();
 
+        if($request->has('atributos_marca')) {
+            $atributos_marca = $request->atributos_marca;
+            $modelos = $this->modelo->with('marca:id,'.$atributos_marca); 
+        } else {
+            $modelos = $this->modelo->with('marca');
+        }
+
         if($request->has('atributos')) {
             $atributos = $request->atributos;
+            
+            //dd($atributos_marca);
             //$modelos = $this->modelo->selectRaw('id', 'nome', 'imagem')->get();
-            $modelos = $this->modelo->selectRaw($atributos)->with('marca')->get(); // para o parametro marca_id nao vir null no endpoint ao passar na url o parametro, marca_id tem que ser passado no parametro da url
+            //$modelos = $this->modelo->selectRaw($atributos)->with('marca')->get(); // para o parametro marca_id nao vir null no endpoint ao passar na url o parametro, marca_id tem que ser passado no parametro da url
             //selectRaw aceita string unica separada por virgulas (para identificar as colunas)
+            //$modelos = $this->modelo->selectRaw($atributos)->with('marca:id,nome,imagem')->get();
+            $modelos = $modelos->selectRaw($atributos)->get();
 
             //'id', 'nome', 'imagem'   ---  usar select()
             //"id,nome,imagem" -- usar selectRaw()
-
-
-
             //dd($request->atributos);
-            
         } else {
-            $modelos = $this->modelo->with('marca')->get();
+            $modelos = $modelos->get();
         }
         
         //return response()->json($this->modelo->with('marca')->get(), 200);
