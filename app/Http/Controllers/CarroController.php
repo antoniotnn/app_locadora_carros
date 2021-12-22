@@ -141,9 +141,7 @@ class CarroController extends Controller
         $carro = $this->carro->find($id);
 
         if($carro === null) {
-            //return ['erro' => 'Impossível realizar a exclusão. O recurso solicitado não existe'];
             return response()->json(['erro' => 'Impossível realizar a exclusão. O recurso solicitado não existe'], 404);
-            
         }
         
         $carro->delete();
