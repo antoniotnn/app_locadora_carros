@@ -1,6 +1,6 @@
 <template>
 
-  <div class="container">
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <!-- Início do Card de Busca -->
@@ -33,12 +33,13 @@
                     </template>
 
                     <template v-slot:rodape>
-                        <button type="button" class="btn btn-primary btn-sm" style="float: right;">Adicionar</button>
+                        <button type="button" class="btn btn-primary btn-sm" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalMarca">Adicionar</button>
                     </template>
                 </card-component>
                 <!-- Fim do Card de listagem de marcas -->
             </div>
         </div>
+        <modal-component id="modalMarca" titulo="Adicionar Marca"></modal-component>
     </div>
 
 </template>
