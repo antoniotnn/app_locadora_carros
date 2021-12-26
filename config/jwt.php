@@ -101,7 +101,7 @@ return [
     |
     */
 
-    'ttl' => env('JWT_TTL', 60), // tempo de vida em minutos
+    'ttl' => env('JWT_TTL', 60), // tempo de vida em minutos, podendo ser passado para a variavel de ambiente em .env
 
     /*
     |--------------------------------------------------------------------------
