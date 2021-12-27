@@ -77,11 +77,13 @@
                 let token = document.cookie.split(';').find(indice => {
                     return indice.includes('token=');
                 });
-
-                token = token.split('=')[1];
-                token = 'Bearer ' + token;
                 
-                return token;
+                if (token) {
+                    token = token.split('=')[1];
+                    token = 'Bearer ' + token;
+                    return token;
+                }
+                return null;
             }
         },
         data() {
@@ -90,7 +92,7 @@
                 nomeMarca: '',
                 arquivoImagem: [],
                 transacaoStatus: '',
-                transacaoDetalhes: []
+                transacaoDetalhes: {}
             }
         },
         methods: {
@@ -98,7 +100,7 @@
                 this.arquivoImagem = event.target.files;
             },
             salvar() {
-                console.log(this.nomeMarca, this.arquivoImagem[0]);
+                //console.log(this.nomeMarca, this.arquivoImagem[0]);
 
                 let formData = new FormData();
                 formData.append('nome', this.nomeMarca);
@@ -115,12 +117,17 @@
                 axios.post(this.urlBase, formData, config)
                     .then(response => {
                         this.transacaoStatus = 'adicionado';
-                        this.transacaoDetalhes = response;
-                        console.log(response);
+                        this.transacaoDetalhes = {
+                            mensagem: 'ID do registro: '+ response.data.id
+                        };
+                        //console.log(response);
                     })
                     .catch(errors => {
                         this.transacaoStatus = 'erro';
-                        this.transacaoDetalhes = errors.response;
+                        this.transacaoDetalhes = {
+                            mensagem: errors.response.data.message,
+                            dados: errors.response.data.errors
+                        };
                         //console.log(errors.response.data.message);
                     })
             }
