@@ -98,7 +98,15 @@
         },
         methods: {
             carregarLista() {
-                axios.get(this.urlBase)
+
+                let config = {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
+                };
+
+                axios.get(this.urlBase, config)
                     .then(response => {
                         this.marcas = response.data;
                         console.log(this.marcas);
@@ -111,8 +119,7 @@
                 this.arquivoImagem = event.target.files;
             },
             salvar() {
-                //console.log(this.nomeMarca, this.arquivoImagem[0]);
-
+               
                 let formData = new FormData();
                 formData.append('nome', this.nomeMarca);
                 formData.append('imagem', this.arquivoImagem[0]);
@@ -123,7 +130,7 @@
                         'Accept': 'application/json',
                         'Authorization': this.token
                     }
-                }
+                };
 
                 axios.post(this.urlBase, formData, config)
                     .then(response => {
@@ -131,7 +138,6 @@
                         this.transacaoDetalhes = {
                             mensagem: 'ID do registro: '+ response.data.id
                         };
-                        //console.log(response);
                     })
                     .catch(errors => {
                         this.transacaoStatus = 'erro';
@@ -139,8 +145,7 @@
                             mensagem: errors.response.data.message,
                             dados: errors.response.data.errors
                         };
-                        //console.log(errors.response.data.message);
-                    })
+                    });
             }
         },
         mounted() {
