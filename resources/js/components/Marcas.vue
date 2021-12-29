@@ -65,6 +65,8 @@
                 <!-- Fim do Card de listagem de marcas -->
             </div>
         </div>
+
+        <!-- Início do modal de inclusão de Marca -->
         <modal-component id="modalMarca" titulo="Adicionar Marca">
             <template v-slot:alertas>
                 <alert-component tipo="success" :detalhes="transacaoDetalhes" titulo="Cadastro realizado com sucesso" v-if="transacaoStatus == 'adicionado'"></alert-component>
@@ -91,6 +93,19 @@
                 <button type="button" class="btn btn-primary" @click="salvar()">Salvar</button>
             </template>
         </modal-component>
+        <!-- Fim do modal de inclusão de Marca -->
+
+        <!-- Início do modal de Visualização de Marca -->
+        <modal-component id="modalMarcaVisualizar" titulo="Visualizar Marca">
+            <template v-slot:alertas></template>
+            <template v-slot:conteudo>
+                Teste
+            </template>
+            <template v-slot:rodape>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </template>
+        </modal-component>
+        <!-- Fim do modal de Visualização de Marca -->
     </div>
 
 </template>
