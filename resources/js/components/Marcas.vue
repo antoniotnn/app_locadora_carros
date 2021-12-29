@@ -114,6 +114,8 @@ import Paginate from './Paginate.vue';
         data() {
             return {
                 urlBase: 'http://localhost:8000/api/v1/marca',
+                urlPaginacao: '',
+                urlFiltro: '',
                 nomeMarca: '',
                 arquivoImagem: [],
                 transacaoStatus: '',
@@ -135,19 +137,26 @@ import Paginate from './Paginate.vue';
                             filtro += ';';
                         }
                         filtro += chave + ':like:' + this.busca[chave];
-                        
+
                     }
                 }
-                console.log(filtro);
+                if(filtro != '') {
+                    this.urlPaginacao = 'page=1';
+                    this.urlFiltro = '&filtro='+filtro;
+                } else {
+                    this.urlFiltro = '';
+                }
+                this.carregarLista();
             },
             paginacao(l) {
                 if(l.url) {
-                    this.urlBase = l.url; //ajustando a url de consulta com o parâmetro de página
+                    //this.urlBase = l.url; //ajustando a url de consulta com o parâmetro de página
+                    this.urlPaginacao = l.url.split('?')[1];
                     this.carregarLista(); //requisitando novamente os dados para a API
                 }
             },
             carregarLista() {
-
+                
                 let config = {
                     headers: {
                         'Accept': 'application/json',
@@ -155,7 +164,11 @@ import Paginate from './Paginate.vue';
                     }
                 }
 
-                axios.get(this.urlBase, config)
+                let url = this.urlBase + '?' + this.urlPaginacao + this.urlFiltro;
+
+                console.log(url);
+
+                axios.get(url, config)
                     .then(response => {
                         this.marcas = response.data;
                         //console.log(this.marcas);
