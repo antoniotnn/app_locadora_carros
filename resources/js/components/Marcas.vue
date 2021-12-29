@@ -45,8 +45,11 @@
                         <div class="row">
                             <div class="col-10">
                                 <paginate-component>
-                                    <li v-for="l, key in marcas.links" :key="key" class="page-item">
-                                        <a class="page-link" href="#" v-html="l.label"></a>
+                                    <li v-for="l, key in marcas.links" :key="key" 
+                                        :class="l.active ? 'page-item active' : 'page-item'" 
+                                        @click="paginacao(l)" 
+                                    >
+                                        <a class="page-link" v-html="l.label"></a>
                                     </li>
                                 </paginate-component>
                             </div>
@@ -119,6 +122,12 @@ import Paginate from './Paginate.vue';
             }
         },
         methods: {
+            paginacao(l) {
+                if(l.url) {
+                    this.urlBase = l.url; //ajustando a url de consulta com o parâmetro de página
+                    this.carregarLista(); //requisitando novamente os dados para a API
+                }
+            },
             carregarLista() {
 
                 let config = {
@@ -131,7 +140,7 @@ import Paginate from './Paginate.vue';
                 axios.get(this.urlBase, config)
                     .then(response => {
                         this.marcas = response.data;
-                        console.log(this.marcas);
+                        //console.log(this.marcas);
                     })
                     .catch(errors => {
                         console.log(errors);
