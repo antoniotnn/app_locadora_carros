@@ -42,7 +42,18 @@
                     </template>
 
                     <template v-slot:rodape>
-                        <button type="button" class="btn btn-primary btn-sm" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalMarca">Adicionar</button>
+                        <div class="row">
+                            <div class="col-10">
+                                <paginate-component>
+                                    <li v-for="l, key in marcas.links" :key="key" class="page-item">
+                                        <a class="page-link" href="#" v-html="l.label"></a>
+                                    </li>
+                                </paginate-component>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="btn btn-primary btn-sm" style="float: right;" data-bs-toggle="modal" data-bs-target="#modalMarca">Adicionar</button>
+                            </div>
+                        </div>
                     </template>
                 </card-component>
                 <!-- Fim do Card de listagem de marcas -->
@@ -79,8 +90,10 @@
 </template>
 
 <script>
+import Paginate from './Paginate.vue';
 
     export default {
+  components: { Paginate },
         computed: {
             token() {
                 let token = document.cookie.split(';').find(indice => {
@@ -118,7 +131,7 @@
                 axios.get(this.urlBase, config)
                     .then(response => {
                         this.marcas = response.data;
-                        //console.log(this.marcas);
+                        console.log(this.marcas);
                     })
                     .catch(errors => {
                         console.log(errors);
