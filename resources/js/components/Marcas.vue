@@ -126,8 +126,13 @@
 
         <!-- Início do modal de Remoção de Marca -->
         <modal-component id="modalMarcaRemover" titulo="Remover Marca">
-            <template v-slot:alertas></template>
-            <template v-slot:conteudo>
+            <template v-slot:alertas>
+
+                <alert-component tipo="success" titulo="Transação realizada com sucesso" :detalhes="$store.state.transacao" v-if="$store.state.transacao.status == 'sucesso'"></alert-component> 
+                <alert-component tipo="danger" titulo="Erro na transação" :detalhes="$store.state.transacao" v-if="$store.state.transacao.status == 'erro'"></alert-component> 
+
+            </template>
+            <template v-slot:conteudo v-if="$store.state.transacao.status != 'sucesso'">
 
                 <input-container-component titulo="ID">
                     <input type="text" class="form-control" :value="$store.state.item.id" disabled>
@@ -140,7 +145,7 @@
             </template>
             <template v-slot:rodape>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-danger" @click="remover()">Remover</button>
+                <button type="button" class="btn btn-danger" @click="remover()" v-if="$store.state.transacao.status != 'sucesso'">Remover</button>
             </template>
         </modal-component>
         <!-- Fim do modal de Remoção de Marca -->
@@ -149,11 +154,12 @@
 </template>
 
 <script>
+import Alert from './Alert.vue';
 import InputContainer from './InputContainer.vue';
 import Paginate from './Paginate.vue';
 
     export default {
-  components: { Paginate, InputContainer },
+  components: { Paginate, InputContainer, Alert },
         computed: {
             token() {
                 let token = document.cookie.split(';').find(indice => {
@@ -203,15 +209,16 @@ import Paginate from './Paginate.vue';
 
                 axios.post(url, formData, config)
                     .then(response => {
-                        console.log('Registro removido com sucesso', response);
+                        this.$store.state.transacao.status = 'sucesso';
+                        this.$store.state.transacao.mensagem = response.data.msg;
                         this.carregarLista();
                     })
                     .catch(errors => {
-                        console.log('Houve um erro na tentativa de remoção do registro', errors.response);
+                        this.$store.state.transacao.status = 'erro';
+                        this.$store.state.transacao.mensagem = errors.response.data.erro;
                     });
             },
             pesquisar() {
-                console.log(this.busca);
 
                 let filtro = '';
 
@@ -251,12 +258,9 @@ import Paginate from './Paginate.vue';
 
                 let url = this.urlBase + '?' + this.urlPaginacao + this.urlFiltro;
 
-                console.log(url);
-
                 axios.get(url, config)
                     .then(response => {
                         this.marcas = response.data;
-                        //console.log(this.marcas);
                     })
                     .catch(errors => {
                         console.log(errors);
@@ -285,6 +289,7 @@ import Paginate from './Paginate.vue';
                         this.transacaoDetalhes = {
                             mensagem: 'ID do registro: '+ response.data.id
                         };
+                        this.carregarLista();
                     })
                     .catch(errors => {
                         this.transacaoStatus = 'erro';
