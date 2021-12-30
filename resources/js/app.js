@@ -16,9 +16,18 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        teste: 'Teste sde recuperação de valor da Store do Vuex'
+        item: {}
     }
 });
+
+/* Importando e Configurando o Moment.JS */
+import moment from 'moment';
+
+    Vue.filter('formatDate', function(value) {
+        if (value) {
+            return moment(String(value)).format('DD/MM/YYYY hh:mm');
+        } 
+    });
 
 /**
  * The following block of code may be used to automatically register your
@@ -52,15 +61,3 @@ const app = new Vue({
     el: '#app',
     store
 });
-
-
-import Vue from 'vue';
-
-/* Configurando o Moment.JS */
-import moment from 'moment';
-
-    Vue.filter('formatDate', function(value) {
-        if (value) {
-            return moment(String(value)).format('DD/MM/YYYY hh:mm');
-        } 
-    });

@@ -4,8 +4,6 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <!-- Início do Card de Busca -->
-                {{ $store.state.teste }}
-                <button @click="$store.state.teste = 'Modifiquei o valor da Store do Vuex'">Teste</button>
                 <card-component titulo="Busca de Marcas">
                     <template v-slot:conteudo>
                         <div class="row">
@@ -101,7 +99,24 @@
         <modal-component id="modalMarcaVisualizar" titulo="Visualizar Marca">
             <template v-slot:alertas></template>
             <template v-slot:conteudo>
-                Teste
+
+                <input-container-component titulo="ID">
+                    <input type="text" class="form-control" :value="$store.state.item.id" disabled>
+                </input-container-component>
+
+                <input-container-component titulo="Nome da Marca">
+                    <input type="text" class="form-control" :value="$store.state.item.nome" disabled>
+                </input-container-component>
+
+                <input-container-component titulo="Imagem">
+                    <img :src="'storage/'+$store.state.item.imagem" v-if="$store.state.item.imagem">
+                </input-container-component>
+
+                <input-container-component titulo="Data de Criação">
+                    <input type="text" class="form-control" :value="$store.state.item.created_at | formatDate" disabled>
+                </input-container-component>
+                
+
             </template>
             <template v-slot:rodape>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -113,10 +128,11 @@
 </template>
 
 <script>
+import InputContainer from './InputContainer.vue';
 import Paginate from './Paginate.vue';
 
     export default {
-  components: { Paginate },
+  components: { Paginate, InputContainer },
         computed: {
             token() {
                 let token = document.cookie.split(';').find(indice => {
