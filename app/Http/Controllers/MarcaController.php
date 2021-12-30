@@ -172,29 +172,21 @@ class MarcaController extends Controller
         } else {
             $request->validate($marca->rules(), $marca->feedback());
         }
-        
-        //remmove o arquivo antigo caso um novo arquivo tenha sido enviado no request
-        if($request->file('imagem')) {
-            Storage::disk('public')->delete($marca->imagem);
-        }
-
-        $imagem = $request->file('imagem');
-        $imagem_urn = $imagem->store('imagens', 'public');
-        
-        // para isso funcionar, necessário usar o POST  e passar no body da requisicao o parametro _method com value put ou patch
-        //preencher o obj marca com os dados do request
+         
+        //preenchendo o objeto $marca com todos os dados do request
         $marca->fill($request->all());
-        $marca->imagem = $imagem_urn;
-        //dd($marca->getAttributes());
-        $marca->save(); // método save consegue lidar tanto com inserção quanto update, desde q o id esteja no contexto.
-        /*
-            $marca->update([
-                'nome' => $request->nome,
-                'imagem' => $imagem_urn
-            ]);
-        */
 
-        //return $marca;
+        //se a imagem foi encaminhada na requisição
+        if ($request->file('imagem')) {
+            //remmove o arquivo antigo caso um novo arquivo tenha sido enviado no request
+            Storage::disk('public')->delete($marca->imagem);
+
+            $imagem = $request->file('imagem');
+            $imagem_urn = $imagem->store('imagens', 'public');
+            $marca->imagem = $imagem_urn;
+        }
+        $marca->save(); // método save consegue lidar tanto com inserção quanto update, desde q o id esteja no contexto.
+        
         return response()->json($marca, 200);
     }
 
