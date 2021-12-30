@@ -32,7 +32,7 @@
                         <table-component 
                         :dados="marcas.data"
                         :visualizar="{ visivel: true, dataBsToggle: 'modal', dataBsTarget: '#modalMarcaVisualizar' }"
-                        :atualizar="true"
+                        :atualizar="{ visivel: true, dataBsToggle: 'modal', dataBsTarget: '#modalMarcaAtualizar' }"
                         :remover="{ visivel: true, dataBsToggle: 'modal', dataBsTarget: '#modalMarcaRemover' }"
                         :titulos="{
                             id: {titulo: 'ID', tipo: 'texto'},
@@ -149,6 +149,32 @@
             </template>
         </modal-component>
         <!-- Fim do modal de Remoção de Marca -->
+
+        <!-- Início do modal de Atualização de Marca -->
+        <modal-component id="modalMarcaAtualizar" titulo="Atualizar Marca">
+            <template v-slot:alertas>  
+            </template>
+
+            <template v-slot:conteudo>
+                <div class="form-group">
+                    <input-container-component titulo="Nome da Marca" id="atualizarNome" id-help="atualizarNomeHelp" texto-ajuda="Informe o Nome da Marca">
+                        <input type="text" class="form-control" id="atualizarNome" aria-describedby="atualizarNomeHelp" placeholder="Nome da Marca" v-model="nomeMarca">
+                    </input-container-component>
+                </div>
+
+                <div class="form-group">
+                    <input-container-component titulo="Imagem" id="atualizarImagem" id-help="atualizarImagemHelp" texto-ajuda="Selecione uma imagem no formato .png">
+                        <input type="file" class="form-control-file" id="atualizarImagem" aria-describedby="atualizarImagemHelp" placeholder="Selecione uma Imagem" @change="carregarImagem($event)">
+                    </input-container-component>
+                </div>
+            </template>
+
+            <template v-slot:rodape>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" @click="atualizar()">Atualizar</button>
+            </template>
+        </modal-component>
+        <!-- Fim do modal de Atualização de Marca -->
     </div>
 
 </template>
@@ -188,6 +214,9 @@ import Paginate from './Paginate.vue';
             }
         },
         methods: {
+            atualizar() {
+                console.log(this.$store.state.item);
+            },
             remover() {
                 let confirmacao = confirm('Tem certeza que deseja remover esse registro?');
 
