@@ -158,7 +158,7 @@
             <template v-slot:conteudo>
                 <div class="form-group">
                     <input-container-component titulo="Nome da Marca" id="atualizarNome" id-help="atualizarNomeHelp" texto-ajuda="Informe o Nome da Marca">
-                        <input type="text" class="form-control" id="atualizarNome" aria-describedby="atualizarNomeHelp" placeholder="Nome da Marca" v-model="nomeMarca">
+                        <input type="text" class="form-control" id="atualizarNome" aria-describedby="atualizarNomeHelp" placeholder="Nome da Marca" v-model="$store.state.item.nome">
                     </input-container-component>
                 </div>
 
@@ -167,6 +167,7 @@
                         <input type="file" class="form-control-file" id="atualizarImagem" aria-describedby="atualizarImagemHelp" placeholder="Selecione uma Imagem" @change="carregarImagem($event)">
                     </input-container-component>
                 </div>
+                {{$store.state.item}}
             </template>
 
             <template v-slot:rodape>
@@ -215,7 +216,30 @@ import Paginate from './Paginate.vue';
         },
         methods: {
             atualizar() {
-                console.log(this.$store.state.item);
+            
+                let formData = new FormData();
+                formData.append('_method', 'patch');
+                formData.append('nome', this.$store.state.item.nome);
+                formData.append('imagem', this.arquivoImagem[0]);
+
+                let url = this.urlBase + '/' + this.$store.state.item.id;
+
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Accept': 'application/json',
+                        'Authorization': this.token
+                    }
+                }
+
+                axios.post(url, formData, config)
+                    .then(response => {
+                        console.log('Atualizado', response);
+                    })
+                    .catch(errors => {
+                        console.log('Erro de atualização', errors.response);
+                    });
+                    
             },
             remover() {
                 let confirmacao = confirm('Tem certeza que deseja remover esse registro?');
