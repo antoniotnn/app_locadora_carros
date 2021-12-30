@@ -39,3 +39,11 @@ Vue.component('paginate-component', require('./components/Paginate.vue').default
 const app = new Vue({
     el: '#app',
 });
+
+import moment from 'moment';
+
+    Vue.filter('formatDate', function(value) {
+        if (value) {
+            return moment(String(value)).format('DD/MM/YYYY hh:mm');
+        } 
+    });
