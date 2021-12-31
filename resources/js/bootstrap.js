@@ -58,7 +58,7 @@ axios.interceptors.request.use(
         return config;
     },
     error => {
-        console.log('Erro na requisição', error);
+        //console.log('Erro na requisição', error);
         return Promise.reject(error);
     }
 );
@@ -67,11 +67,25 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     response => {
-        console.log('Interceptando o Response antes da aplicação', response);
+        //console.log('Interceptando o Response antes da aplicação', response);
         return response;
     },
     error => {
-        console.log('Erro na resposta', error);
+        //console.log('Erro na resposta', error.response);
+
+        if(error.response.status == 401 && error.response.data.message == 'Token has expired') {
+            //console.log('Faremos uma nova requisição para a rota refresh');
+
+            axios.post('http://localhost:8000/api/refresh')
+                .then(response => {
+                    //console.log('Refresh com sucesso', response);
+
+                    document.cookie = 'token='+response.data.token+';SameSite=Lax';
+                    //console.log('Token atualizado', response.data.token);
+                    window.location.reload();
+                });
+
+        }
         return Promise.reject(error);
     }
 );
