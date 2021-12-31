@@ -23,12 +23,33 @@ const store = new Vuex.Store({
 
 /* Importando e Configurando o Moment.JS */
 import moment from 'moment';
+import Vue from 'vue';
 
-    Vue.filter('formatDate', function(value) {
-        if (value) {
-            return moment(String(value)).format('DD/MM/YYYY hh:mm');
-        } 
-    });
+Vue.filter('formatDate', function(value) {
+    if (value) {
+        return moment(String(value)).format('DD/MM/YYYY hh:mm');
+    } 
+});
+
+ /* Registrando o Filtro feito na mão */
+
+ Vue.filter('formataDataTempoGlobal', function(d) {
+    if(!d) return '';
+
+    d = d.split('T');
+    let data = d[0];
+    let tempo = d[1];
+    
+    //formatando a data
+    data = data.split('-');
+    data = data[2] + '/' + data[1] + '/' + data[0];
+    
+    //formatar o tempo
+    tempo = tempo.split('.');
+    tempo = tempo[0];
+    
+    return data + ' ' + tempo;
+ });
 
 /**
  * The following block of code may be used to automatically register your
